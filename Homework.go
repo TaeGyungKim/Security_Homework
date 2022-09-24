@@ -20,8 +20,8 @@ https://stackoverflow.com/questions/71141811/convert-png-image-to-raw-byte-golan
 package main
 
 import (
-	//openssl "Security_Homework/Openssl" //openssl를 이용하는 패키지
-	builtin "Security_Homework/builtin" //내장 함수를 이용하는 패키지
+	openssl "Security_Homework/Openssl" //openssl를 이용하는 패키지
+	//builtin "Security_Homework/builtin" //내장 함수를 이용하는 패키지
 	"bufio"
 	"fmt"
 	"image"
@@ -33,8 +33,8 @@ import (
 func main() {
 	key := []byte("1234567890123456") //16바이트
 	src := []byte("1234567890987655") //test값, 16바이트
-	builtin.AesECB(key, src)
-	//openssl.AesECB(key, src)
+	//builtin.AesECB(key, src)
+	openssl.AesECB(key, src)
 
 	//text
 	//txt := textFile("test.txt")
