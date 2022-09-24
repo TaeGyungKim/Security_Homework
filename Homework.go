@@ -2,11 +2,11 @@
 정보보안 과제
 깃허브에서 공개 AES 알고리즘을 찾아서 실행하고  암호화 및 복호화되는 과정 보이시오
 
-
 2018108254 김태경
-2022-09-23
+2022-09-23 생성
+2022-09-24 수정
+ - 16byte 난수 생성기 추가
 */
-
 /*참고사이트
 
 https://pkg.go.dev/image
@@ -21,8 +21,9 @@ package main
 
 import (
 	openssl "Security_Homework/Openssl" //openssl를 이용하는 패키지
-	//builtin "Security_Homework/builtin" //내장 함수를 이용하는 패키지
+	builtin "Security_Homework/builtin" //내장 함수를 이용하는 패키지
 	"bufio"
+	"crypto/rand"
 	"fmt"
 	"image"
 	_ "image/png"
@@ -31,9 +32,19 @@ import (
 )
 
 func main() {
-	key := []byte("1234567890123456") //16바이트
-	src := []byte("1234567890987655") //test값, 16바이트
-	//builtin.AesECB(key, src)
+	//key := []byte("1234567890123456") //16바이트
+	//src := []byte("1234567890987655") //test값, 16바이트
+
+	key := make([]byte, 16)
+	randomGenerater16(key, "key") //키값에 임의의 16바이트값 부여
+
+	src := make([]byte, 16)
+	randomGenerater16(src, "plainText") //test값에 임의의 16바이트값 부여
+
+	iv := make([]byte, 16)
+	randomGenerater16(iv, "Init vector") // iv에 임의 16바이트 값 부여
+
+	builtin.AesECB(key, src)
 	openssl.AesECB(key, src)
 
 	//text
@@ -48,7 +59,19 @@ func main() {
 
 }
 
-//텍스트 디코딩
+// 입력값에 임의의 16바이트값 부여하는 함수
+func randomGenerater16(value []byte, name string) []byte {
+	_, err := rand.Read(value)
+	if err != nil {
+		log.Fatal("error:", err)
+		return nil
+	}
+	log.Println(name, " value : ", value)
+
+	return value
+}
+
+// 텍스트 디코딩
 func textFile(filePath string) []byte {
 	file, err := os.Open(filePath) //Read Only
 	if err != nil {
@@ -66,7 +89,7 @@ func textFile(filePath string) []byte {
 	return []byte(scanner.Text())
 }
 
-//이미지 디코딩
+// 이미지 디코딩
 func imageFile(filePath string) []byte {
 	file, err := os.Open(filePath) //Read Only
 	if err != nil {
@@ -86,7 +109,7 @@ func imageFile(filePath string) []byte {
 	return imageData
 }
 
-//png 이미지를 raw 파일로 변환시키는 함수
+// png 이미지를 raw 파일로 변환시키는 함수
 func imageToRGBA(img image.Image) []uint8 {
 	sz := img.Bounds()
 	raw := make([]uint8, (sz.Max.X-sz.Min.X)*(sz.Max.Y-sz.Min.Y)*4)

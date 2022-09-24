@@ -3,10 +3,10 @@
 
 
 2018108254 김태경
-2022-09-23
+2022-09-23 생성
 */
-
-/*참고 사이트
+/*
+참고 사이트
 https://pkg.go.dev/crypto
 https://pkg.go.dev/crypto/aes
 https://pkg.go.dev/crypto/cipher
@@ -24,10 +24,10 @@ import (
 	"log"
 )
 
-//고 언어에 내장된 패키지 aes를 이용하는 함수
-//키와 평문을 받아와서 실행
-//이 함수는 ECB 방식으로 16바이트씩 잘라서 실행
-//모드를 설정하지 않을 경우 패딩 등을 지원하지 않음.
+// 고 언어에 내장된 패키지 aes를 이용하는 함수
+// 키와 평문을 받아와서 실행
+// 이 함수는 ECB 방식으로 16바이트씩 잘라서 실행
+// 모드를 설정하지 않을 경우 패딩 등을 지원하지 않음.
 func AesECB(key, src []byte) {
 	block, err := aes.NewCipher(key) //AES 대칭키 암호화 블록 생성
 	if err != nil {
@@ -45,7 +45,7 @@ func AesECB(key, src []byte) {
 
 }
 
-//AES CBC 암호화
+// AES CBC 암호화
 func AesCBCEncrypt(key, plaintext []byte) []byte {
 	block, err := aes.NewCipher(key) //AES 대칭키 암호화 블록 생성
 	if err != nil {
@@ -76,7 +76,7 @@ func AesCBCEncrypt(key, plaintext []byte) []byte {
 	return ciphertext
 }
 
-//Aes CBC 복호화
+// Aes CBC 복호화
 func AesCBCDecrypt(key, ciphertext []byte) {
 	block, err := aes.NewCipher(key)
 	if err != nil {
