@@ -9,6 +9,28 @@
 */
 /*참고사이트
 
+쉽게 배우는 소프트웨어 공학
+
+//builtin.go
+https://pkg.go.dev/crypto
+https://pkg.go.dev/crypto/aes
+https://pkg.go.dev/crypto/cipher
+https://pkg.go.dev/crypto/cipher#NewCBCDecrypter //예제 이용
+https://pkg.go.dev/github.com/golang-module/dongle
+
+//openssl.go
+https://pkg.go.dev/github.com/forgoer/openssl#section-readme
+https://pkg.go.dev/github.com/forgoer/openssl //예제 이용
+
+//Homework.go
+https://pkg.go.dev/image
+https://go.dev/play/p/WUgHQ3pRla //예제 이용
+https://go.dev/blog/image
+https://pkg.go.dev/image/png
+https://stackoverflow.com/questions/71141811/convert-png-image-to-raw-byte-golang
+
+
+
 https://pkg.go.dev/image
 https://go.dev/play/p/WUgHQ3pRla
 https://go.dev/blog/image
@@ -21,7 +43,7 @@ package main
 
 import (
 	openssl "Security_Homework/Openssl" //openssl를 이용하는 패키지
-	builtin "Security_Homework/builtin" //내장 함수를 이용하는 패키지
+	//builtin "Security_Homework/builtin" //내장 함수를 이용하는 패키지
 	"bufio"
 	"crypto/rand"
 	"fmt"
@@ -32,36 +54,40 @@ import (
 )
 
 func main() {
-	//key := []byte("1234567890123456") //16바이트
-	//src := []byte("1234567890987655") //test값, 16바이트
+	key := []byte("1234567890123456") //16바이트
+	src := []byte("1234567890987655") //test값, 16바이트
+	//iv := []byte("1234567890123456") //ex
 
-	key := make([]byte, 16)
-	randomGenerater16(key, "key") //키값에 임의의 16바이트값 부여
+	//key := make([]byte, 16)
+	//randomGenerater16(key, "key") //키값에 임의의 16바이트값 부여
 
-	src := make([]byte, 16)
-	randomGenerater16(src, "plainText") //test값에 임의의 16바이트값 부여
+	//src := make([]byte, 16)
+	//randomGenerater16(src, "plainText") //test값에 임의의 16바이트값 부여
 
-	iv := make([]byte, 16)
-	randomGenerater16(iv, "Init vector") // iv에 임의 16바이트 값 부여
+	//iv := make([]byte, 16)
+	//randomGenerater16(iv, "Init vector") // iv에 임의 16바이트 값 부여
 
-	builtin.AesECB(key, src)
-	openssl.AesECB(key, src)
+	log.Println(string(src)) // 암호화하기 전의 평문 출력
 
-	//text
+	openssl.AesECB(key, src) // openssl에서 지원하는 AES의 ECB 모드
+	//builtin.AesECB(key, src)
+
+	//openssl.AesCBC(key, src, iv)     // CBC 모드
+
+	//text 사용하는 경우
 	//txt := textFile("test.txt")
 	//builtin.AesECB(key, txt)
 	//openssl.AesECB(key, txt)
-
-	//image
-	//img := imageFile("lena.png")
 	//builtin.AesECB(key, img)
-	//openssl.AesECB(key, img)
 
+	//image 사용하는 경우
+	//img := imageFile("lena.png")      //이미지(png)를 []byte 형식으로 변환
+	//openssl.AesECB(key, img)
 }
 
 // 입력값에 임의의 16바이트값 부여하는 함수
 func randomGenerater16(value []byte, name string) []byte {
-	_, err := rand.Read(value)
+	_, err := rand.Read(value) //랜덤 부여
 	if err != nil {
 		log.Fatal("error:", err)
 		return nil

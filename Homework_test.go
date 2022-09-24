@@ -14,7 +14,7 @@ import (
 	openssl "Security_Homework/Openssl" //openssl를 이용하는 패키지
 	//builtin "Security_Homework/builtin" //내장 함수를 이용하는 패키지
 
-	"crypto/rand"
+	"log"
 	"testing"
 	//"github.com/stretchr/testify/assert"
 )
@@ -25,6 +25,7 @@ func Test(t *testing.T) {
 
 }
 */
+
 /*
 func Benchmark_Image(b *testing.B) {
 	key := []byte("1234567890123456")
@@ -35,19 +36,18 @@ func Benchmark_Image(b *testing.B) {
 }*/
 
 func Benchmark_Text(b *testing.B) {
-	key := make([]byte, 16)
-	_, err := rand.Read(key) //임의의 16바이트값 부여
-	if err != nil {
-		return
-	}
-
-	src := make([]byte, 16)
-	_, err = rand.Read(src) //임의의 16바이트값 부여
-	if err != nil {
-		return
-	}
-
 	//src := []byte("1234567890987655") //test값, 16바이트
-	//builtin.AesECB(key, src)
+	key := []byte("1234567890123456")
+
+	src := make([]byte, 16)             //uint src[16]; 선언
+	randomGenerater16(src, "plainText") //바이트 배열 16바이트로 난수 생성
+
+	//iv := make([]byte, 16)
+	//randomGenerater16(iv, "Init vector") // iv에 임의 16바이트 값 부여
+
+	log.Println(string(src)) // 암호화하기 전의 평문 출력
+
 	openssl.AesECB(key, src)
+	//openssl.AesCBC(key, src, iv)
+	//builtin.AesECB(key, src)
 }
