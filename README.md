@@ -1,4 +1,4 @@
 # AES_Homework
-# Homework of Infomation Security 
-# This is project used of AES Algorithm by GO
+# Homework of Security Lecture
+# This is project used to AES Algorithm by GO
 #
