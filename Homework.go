@@ -12,6 +12,7 @@ SHA-512를 Github에서 찾아서 실행하고, 음악이나 비디오 파일을
  - 오디오 깃허브 패키지 제거
  - fileRead 함수 생성
  - Path 추가
+ - 설명 추가
 
 */
 /*
@@ -19,9 +20,23 @@ SHA-512를 Github에서 찾아서 실행하고, 음악이나 비디오 파일을
 https://github.com/avelino/awesome-go
 https://github.com/hajimehoshi/oto - 오디오 패키지 (사용x)
 https://pkg.go.dev/crypto/sha512
+https://github.com/bioauth/sha512/blob/master/sha512.go - sha512 사용법
+
+https://cs.opensource.google/go/go/+/refs/tags/go1.19.1:src/crypto/sha512/sha512.go
 
 https://lostark.game.onstove.com/OST - audio
 https://store.steampowered.com/app/1057090/Ori_and_the_Will_of_the_Wisps/ - video
+*/
+
+/*digest 구조
+// digest represents the partial evaluation of a checksum.
+type digest struct {
+	h        [8]uint64    //hash
+	x        [chunk]byte //const chunk = 128
+	nx       int           //nx = int(len % chunk)
+	len      uint64	       //len += uint64(len(p)), len(p)는 입력값의 길이
+	function crypto.Hash //Hash identifies
+}
 */
 
 package main
@@ -34,7 +49,7 @@ import (
 )
 
 func main() {
-
+	//hash.Hash == *digest
 	hash := sha512.New() //해시 인스턴스 생성
 
 	AudioPath := "vol1_02_Leonhart.wav"
@@ -45,7 +60,6 @@ func main() {
 
 	result := hash.Sum(nil)                 // write한 해시값 추출
 	log.Println(hex.EncodeToString(result)) //][]byte(char)를 16진수로 출력
-
 }
 
 //파일 경로 얻어와서 파일 읽어내는 함수
