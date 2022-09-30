@@ -8,102 +8,53 @@ SHA-512를 Github에서 찾아서 실행하고, 음악이나 비디오 파일을
  - sha512 사용
  - 오디오 깃허브 패키지 추가
 
+2022-09-30 수정
+ - 오디오 깃허브 패키지 제거
+ - fileRead 함수 생성
+ - Path 추가
+
 */
 /*
 참고 사이트
 https://github.com/avelino/awesome-go
-https://github.com/hajimehoshi/oto - 오디오
+https://github.com/hajimehoshi/oto - 오디오 패키지 (사용x)
 https://pkg.go.dev/crypto/sha512
 
-
+https://lostark.game.onstove.com/OST - audio
+https://store.steampowered.com/app/1057090/Ori_and_the_Will_of_the_Wisps/ - video
 */
+
 package main
 
 import (
-	"bytes"
 	"crypto/sha512" //내장함수 crypto/sha512 패키지를 이용해 sha512 실행
 	"encoding/hex"
 	"log"
 	"os"
-
-	"github.com/hajimehoshi/go-mp3"
-    "github.com/hajimehoshi/oto/v2"
 )
 
 func main() {
-	txt := "test"
-	//
+
 	hash := sha512.New() //해시 인스턴스 생성
 
-	hash.Write([]byte(txt)) //데이터 입력
+	AudioPath := "vol1_02_Leonhart.wav"
+	hash.Write(fileRead(AudioPath)) //음악 파일 입력
 
-	result1 := hash.Sum(nil)              // 해시값 추출 []byte
-	result2 := sha512.Sum512([]byte(txt)) // [64]byte
-	log.Println(hex.EncodeToString(result1))
-	log.Println(hex.EncodeToString(result2[:]))
+	VideoPath := "OriAndTheWilloftheWisps 2021-11-27.mp4"
+	hash.Write(fileRead(VideoPath)) //비디오 파일 입력
 
-	//연결x
-	// Read the mp3 file into memory
-	fileBytes, err := os.ReadFile("./my-file.mp3")
-	if err != nil {
-		panic("reading my-file.mp3 failed: " + err.Error())
-	}
+	result := hash.Sum(nil)                 // write한 해시값 추출
+	log.Println(hex.EncodeToString(result)) //][]byte(char)를 16진수로 출력
 
-	// Convert the pure bytes into a reader object that can be used with the mp3 decoder
-	fileBytesReader := bytes.NewReader(fileBytes)
-
-	// Decode file
-	decodedMp3, err := mp3.NewDecoder(fileBytesReader)
-	if err != nil {
-		panic("mp3.NewDecoder failed: " + err.Error())
-	}
-
-	   // Prepare an Oto context (this will use your default audio device) that will
-    // play all our sounds. Its configuration can't be changed later.
-
-    // Usually 44100 or 48000. Other values might cause distortions in Oto
-    samplingRate := 44100
-
-    // Number of channels (aka locations) to play sounds from. Either 1 or 2.
-    // 1 is mono sound, and 2 is stereo (most speakers are stereo). 
-    numOfChannels := 2
-
-    // Bytes used by a channel to represent one sample. Either 1 or 2 (usually 2).
-    audioBitDepth := 2
-
-    // Remember that you should **not** create more than one context
-    otoCtx, readyChan, err := oto.NewContext(samplingRate, numOfChannels, audioBitDepth)
-    if err != nil {
-        panic("oto.NewContext failed: " + err.Error())
-    }
-    // It might take a bit for the hardware audio devices to be ready, so we wait on the channel.
-    <-readyChan
-
-    // Create a new 'player' that will handle our sound. Paused by default.
-    player := otoCtx.NewPlayer(decodedMp3)
-    
-    // Play starts playing the sound and returns without waiting for it (Play() is async).
-    player.Play()
-
-    // We can wait for the sound to finish playing using something like this
-    for player.IsPlaying() {
-        time.Sleep(time.Millisecond)
-    }
-
-    // Now that the sound finished playing, we can restart from the beginning (or go to any location in the sound) using seek
-    // newPos, err := player.(io.Seeker).Seek(0, io.SeekStart)
-    // if err != nil{
-    //     panic("player.Seek failed: " + err.Error())
-    // }
-    // println("Player is now at position:", newPos)
-    // player.Play()
-
-    // If you don't want the player/sound anymore simply close
-    err = player.Close()
-    if err != nil {
-        panic("player.Close failed: " + err.Error())
-    }
 }
 
+//파일 경로 얻어와서 파일 읽어내는 함수
+func fileRead(filePath string) []byte {
+	// Read the file into memory
+	fileBytes, err := os.ReadFile(filePath)
+	if err != nil {
+		panic("reading file failed: " + err.Error())
+	}
 
+	return fileBytes
 }
